@@ -1,12 +1,25 @@
+import os
+import sys
+import json
+from dotenv import load_dotenv
 from telethon import TelegramClient, events, functions
-from config import API_ID, API_HASH, SESSION
-import json, os, sys
+from telethon.sessions import StringSession
 
-client = TelegramClient(SESSION, API_ID, API_HASH)
+# Load .env
+load_dotenv()
+
+API_ID = int(os.getenv("API_ID"))
+API_HASH = os.getenv("API_HASH")
+SESSION = os.getenv("SESSION")  # This is a string session
+
+# Use StringSession for pre-saved session string
+client = TelegramClient(StringSession(SESSION), API_ID, API_HASH)
+
+# Auto-start
 client.start()
 
+# Approved user list (stored in JSON)
 approved_file = 'approved.json'
-
 if not os.path.exists(approved_file):
     with open(approved_file, 'w') as f:
         json.dump([], f)
@@ -30,18 +43,18 @@ async def pm_handler(event):
     approved = load_approved()
 
     if sender.id in approved:
-        return  # Skip approved users
+        return
 
     # Count messages
     msg_count[sender.id] = msg_count.get(sender.id, 0) + 1
 
-    # Delete the incoming message (auto-clean)
+    # Auto-delete their message
     try:
         await event.delete()
     except:
         pass
 
-    # Respond with MADARA-style warning
+    # MADARA-style warning & block
     if msg_count[sender.id] == 1:
         await client.send_message(sender.id,
             "⚠️ 𝗣𝗠 𝗦𝗘𝗖𝗨𝗥𝗜𝗧𝗬 - 𝗪𝗔𝗥𝗡 ①\n\n"
@@ -49,7 +62,6 @@ async def pm_handler(event):
             "⚔️ 𝐌𝐀𝐃𝐀𝐑𝐀 𝐝𝐨𝐞𝐬𝐧'𝐭 𝐩𝐥𝐚𝐲 𝐰𝐢𝐭𝐡 𝐬𝐭𝐫𝐚𝐧𝐠𝐞𝐫𝐬.\n"
             "🔥 𝐓𝐡𝐢𝐬 𝐢𝐬 𝐲𝐨𝐮𝐫 𝐟𝐢𝐫𝐬𝐭 𝐚𝐧𝐝 𝐨𝐧𝐥𝐲 𝐰𝐚𝐫𝐧𝐢𝐧𝐠."
         )
-
     elif msg_count[sender.id] == 2:
         await client.send_message(sender.id,
             "⚠️ 𝗣𝗠 𝗦𝗘𝗖𝗨𝗥𝗜𝗧𝗬 - 𝗪𝗔𝗥𝗡 ②\n\n"
@@ -57,7 +69,6 @@ async def pm_handler(event):
             "💀 𝐌𝐀𝐃𝐀𝐑𝐀 𝐝𝐞𝐬𝐩𝐢𝐬𝐞𝐬 𝐖𝐄𝐀𝐊 𝐚𝐭𝐭𝐞𝐦𝐩𝐭𝐬.\n"
             "⚡ 𝟏 𝐦𝐨𝐫𝐞 𝐦𝐞𝐬𝐬𝐚𝐠𝐞 = 𝐁𝐋𝐎𝐂𝐊"
         )
-
     elif msg_count[sender.id] >= 3:
         await client.send_message(sender.id,
             "❌ 𝗔𝗨𝗧𝗢-𝗕𝗟𝗢𝗖𝗞𝗘𝗗 ❌\n\n"
