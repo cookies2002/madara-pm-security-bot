@@ -71,7 +71,7 @@ async def pm_handler(event):
             "🕸️ 𝐘𝐨𝐮 𝐡𝐚𝐯𝐞 𝐛𝐞𝐞𝐧 𝐞𝐱𝐭𝐞𝐫𝐦𝐢𝐧𝐚𝐭𝐞𝐝 𝐛𝐲 𝐌𝐀𝐃𝐀𝐑𝐀.\n"
             "🔒 𝐅𝐔𝐓𝐔𝐑𝐄 𝐀𝐂𝐂𝐄𝐒𝐒 𝐃𝐄𝐍𝐈𝐄𝐃.\n"
             "🔇 𝐓𝐡𝐞 𝐀𝐤𝐚𝐭𝐬𝐮𝐤𝐢 𝐝𝐨𝐧'𝐭 𝐟𝐨𝐫𝐠𝐢𝐯𝐞...\n\n"
-            "🩸 𝘛𝘩𝘦 𝘳𝘦𝘢𝘭 𝘎𝘩𝘰𝘴𝘵 𝘜𝘤𝘩𝘪𝘩𝘢 — 𝘥𝘦𝘷: @Madara_Uchiha_lI"
+            "🩸 𝘛𝘩𝘦 𝘳𝘦𝘢𝘭 𝘎𝘩𝘰𝘴𝘵 𝘜𝘤𝘩𝘪𝘩𝘢 — @Madara_Uchiha_lI"
         )
         await client(functions.contacts.BlockRequest(sender.id))
         msg_count.pop(sender.id, None)
