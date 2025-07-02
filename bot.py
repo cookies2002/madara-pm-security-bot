@@ -70,19 +70,20 @@ async def pm_handler(event):
             "⚡ 𝟏 𝐦𝐨𝐫𝐞 𝐦𝐞𝐬𝐬𝐚𝐠𝐞 = 𝐁𝐋𝐎𝐂𝐊"
         )
     elif msg_count[sender.id] >= 3:
-        try:
-            await event.delete()  # Delete 3rd message before blocking
-        except:
-            pass
+    try:
+        await event.delete()  # Delete 3rd message before blocking
+    except:
+        pass
 
-        await client.send_message(sender.id,
-            "❌ 𝗔𝗨𝗧𝗢-𝗕𝗟𝗢𝗖𝗞𝗘𝗗 ❌\n\n"
-            "🕸️ 𝐘𝐨𝐮 𝐡𝐚𝐯𝐞 𝐛𝐞𝐞𝐧 𝐞𝐱𝐭𝐞𝐫𝐦𝐢𝐧𝐚𝐭𝐞𝐝 𝐛𝐲 𝐌𝐀𝐃𝐀𝐑𝐀.\n"
-            "🔒 𝐅𝐔𝐓𝐔𝐑𝐄 𝐀𝐂𝐂𝐄𝐒𝐒 𝐃𝐄𝐍𝐈𝐄𝐃.\n"
-            "🔇 𝐓𝐡𝐞 𝐀𝐤𝐚𝐭𝐬𝐮𝐤𝐢 𝐝𝐨𝐧'𝐭 𝐟𝐨𝐫𝐠𝐢𝐯𝐞..."
-        )
-        await client(functions.contacts.BlockRequest(sender.id))
-        msg_count.pop(sender.id, None)
+    await client.send_message(sender.id,
+        "❌ 𝗔𝗨𝗧𝗢-𝗕𝗟𝗢𝗖𝗞𝗘𝗗 ❌\n\n"
+        "🕸️ 𝐘𝐨𝐮 𝐡𝐚𝐯𝐞 𝐛𝐞𝐞𝐧 𝐞𝐱𝐭𝐞𝐫𝐦𝐢𝐧𝐚𝐭𝐞𝐝 𝐛𝐲 𝐌𝐀𝐃𝐀𝐑𝐀.\n"
+        "🔒 𝐅𝐔𝐓𝐔𝐑𝐄 𝐀𝐂𝐂𝐄𝐒𝐒 𝐃𝐄𝐍𝐈𝐄𝐃.\n"
+        "🔇 𝐓𝐡𝐞 𝐀𝐤𝐚𝐭𝐬𝐮𝐤𝐢 𝐝𝐨𝐧'𝐭 𝐟𝐨𝐫𝐠𝐢𝐯𝐞...\n\n"
+        "🩸 𝘛𝘩𝘦 𝘳𝘦𝘢𝘭 𝘎𝘩𝘰𝘴𝘵 𝘜𝘤𝘩𝘪𝘩𝘢 — @Madara_Uchiha_lI"
+    )
+    await client(functions.contacts.BlockRequest(sender.id))
+    msg_count.pop(sender.id, None)
 
 @client.on(events.NewMessage(outgoing=True, pattern=r"/approve"))
 async def approve(event):
