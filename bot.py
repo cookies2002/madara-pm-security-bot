@@ -70,6 +70,11 @@ async def pm_handler(event):
             "⚡ 𝟏 𝐦𝐨𝐫𝐞 𝐦𝐞𝐬𝐬𝐚𝐠𝐞 = 𝐁𝐋𝐎𝐂𝐊"
         )
     elif msg_count[sender.id] >= 3:
+        try:
+            await event.delete()  # Delete 3rd message before blocking
+        except:
+            pass
+
         await client.send_message(sender.id,
             "❌ 𝗔𝗨𝗧𝗢-𝗕𝗟𝗢𝗖𝗞𝗘𝗗 ❌\n\n"
             "🕸️ 𝐘𝐨𝐮 𝐡𝐚𝐯𝐞 𝐛𝐞𝐞𝐧 𝐞𝐱𝐭𝐞𝐫𝐦𝐢𝐧𝐚𝐭𝐞𝐝 𝐛𝐲 𝐌𝐀𝐃𝐀𝐑𝐀.\n"
@@ -117,5 +122,10 @@ async def list_approved(event):
 async def restart(event):
     await event.reply("♻️ Restarting...")
     os.execl(sys.executable, sys.executable, *sys.argv)
+
+# 💥 MADARA-style terminal status
+print("🩸 MADARA PM SECURITY BOT ACTIVATED ⚔️")
+print("🔥 Guarding Her Majesty’s DMs From Spies & Simps!")
+print("🕹️ Bot is running... waiting for fools to message.\n")
 
 client.run_until_disconnected()
