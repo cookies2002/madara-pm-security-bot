@@ -5,20 +5,15 @@ from dotenv import load_dotenv
 from telethon import TelegramClient, events, functions
 from telethon.sessions import StringSession
 
-# Load .env
 load_dotenv()
 
 API_ID = int(os.getenv("API_ID"))
 API_HASH = os.getenv("API_HASH")
-SESSION = os.getenv("SESSION")  # This is a string session
+SESSION = os.getenv("SESSION")
 
-# Use StringSession for pre-saved session string
 client = TelegramClient(StringSession(SESSION), API_ID, API_HASH)
-
-# Auto-start
 client.start()
 
-# Approved user list (stored in JSON)
 approved_file = 'approved.json'
 if not os.path.exists(approved_file):
     with open(approved_file, 'w') as f:
@@ -41,20 +36,16 @@ async def pm_handler(event):
         return
 
     approved = load_approved()
-
     if sender.id in approved:
         return
 
-    # Count messages
     msg_count[sender.id] = msg_count.get(sender.id, 0) + 1
 
-    # Auto-delete their message
     try:
         await event.delete()
     except:
         pass
 
-    # MADARA-style warning & block
     if msg_count[sender.id] == 1:
         await client.send_message(sender.id,
             "⚠️ 𝗣𝗠 𝗦𝗘𝗖𝗨𝗥𝗜𝗧𝗬 - 𝗪𝗔𝗥𝗡 ①\n\n"
@@ -70,51 +61,83 @@ async def pm_handler(event):
             "⚡ 𝟏 𝐦𝐨𝐫𝐞 𝐦𝐞𝐬𝐬𝐚𝐠𝐞 = 𝐁𝐋𝐎𝐂𝐊"
         )
     elif msg_count[sender.id] >= 3:
-    try:
-        await event.delete()  # Delete 3rd message before blocking
-    except:
-        pass
+        try:
+            await event.delete()
+        except:
+            pass
 
-    await client.send_message(sender.id,
-        "❌ 𝗔𝗨𝗧𝗢-𝗕𝗟𝗢𝗖𝗞𝗘𝗗 ❌\n\n"
-        "🕸️ 𝐘𝐨𝐮 𝐡𝐚𝐯𝐞 𝐛𝐞𝐞𝐧 𝐞𝐱𝐭𝐞𝐫𝐦𝐢𝐧𝐚𝐭𝐞𝐝 𝐛𝐲 𝐌𝐀𝐃𝐀𝐑𝐀.\n"
-        "🔒 𝐅𝐔𝐓𝐔𝐑𝐄 𝐀𝐂𝐂𝐄𝐒𝐒 𝐃𝐄𝐍𝐈𝐄𝐃.\n"
-        "🔇 𝐓𝐡𝐞 𝐀𝐤𝐚𝐭𝐬𝐮𝐤𝐢 𝐝𝐨𝐧'𝐭 𝐟𝐨𝐫𝐠𝐢𝐯𝐞...\n\n"
-        "🩸 𝘛𝘩𝘦 𝘳𝘦𝘢𝘭 𝘎𝘩𝘰𝘴𝘵 𝘜𝘤𝘩𝘪𝘩𝘢 — @Madara_Uchiha_lI"
-    )
-    await client(functions.contacts.BlockRequest(sender.id))
-    msg_count.pop(sender.id, None)
+        await client.send_message(sender.id,
+            "❌ 𝗔𝗨𝗧𝗢-𝗕𝗟𝗢𝗖𝗞𝗘𝗗 ❌\n\n"
+            "🕸️ 𝐘𝐨𝐮 𝐡𝐚𝐯𝐞 𝐛𝐞𝐞𝐧 𝐞𝐱𝐭𝐞𝐫𝐦𝐢𝐧𝐚𝐭𝐞𝐝 𝐛𝐲 𝐌𝐀𝐃𝐀𝐑𝐀.\n"
+            "🔒 𝐅𝐔𝐓𝐔𝐑𝐄 𝐀𝐂𝐂𝐄𝐒𝐒 𝐃𝐄𝐍𝐈𝐄𝐃.\n"
+            "🔇 𝐓𝐡𝐞 𝐀𝐤𝐚𝐭𝐬𝐮𝐤𝐢 𝐝𝐨𝐧'𝐭 𝐟𝐨𝐫𝐠𝐢𝐯𝐞...\n\n"
+            "🩸 𝘛𝘩𝘦 𝘳𝘦𝘢𝘭 𝘎𝘩𝘰𝘴𝘵 𝘜𝘤𝘩𝘪𝘩𝘢 — 𝘥𝘦𝘷: @Madara_Uchiha_lI"
+        )
+        await client(functions.contacts.BlockRequest(sender.id))
+        msg_count.pop(sender.id, None)
 
-@client.on(events.NewMessage(outgoing=True, pattern=r"/approve"))
+@client.on(events.NewMessage(outgoing=True, pattern=r"/approve(?: (.+))?"))
 async def approve(event):
     user = await event.get_reply_message()
-    if not user:
-        await event.reply("🔹 Reply to a user to approve.")
-        return
-    approved = load_approved()
-    if user.sender_id not in approved:
-        approved.append(user.sender_id)
-        save_approved(approved)
-        await event.reply("✅ Approved successfully.")
+    arg = event.pattern_match.group(1)
 
-@client.on(events.NewMessage(outgoing=True, pattern=r"/block"))
+    if user:
+        user_id = user.sender_id
+    elif arg:
+        try:
+            if arg.startswith("@"):
+                user_entity = await client.get_entity(arg)
+                user_id = user_entity.id
+            else:
+                user_id = int(arg)
+        except:
+            await event.reply("❌ Invalid user.")
+            return
+    else:
+        await event.reply("🔹 Usage: `/approve @username` or reply to a message.")
+        return
+
+    approved = load_approved()
+    if user_id not in approved:
+        approved.append(user_id)
+        save_approved(approved)
+        await event.reply(f"✅ Approved: `{user_id}`")
+    else:
+        await event.reply("✅ Already approved.")
+
+@client.on(events.NewMessage(outgoing=True, pattern=r"/block(?: (.+))?"))
 async def block(event):
     user = await event.get_reply_message()
-    if not user:
-        await event.reply("🔹 Reply to a user to block.")
+    arg = event.pattern_match.group(1)
+
+    if user:
+        user_id = user.sender_id
+    elif arg:
+        try:
+            if arg.startswith("@"):
+                user_entity = await client.get_entity(arg)
+                user_id = user_entity.id
+            else:
+                user_id = int(arg)
+        except:
+            await event.reply("❌ Invalid user.")
+            return
+    else:
+        await event.reply("🔹 Usage: `/block @username` or reply to a message.")
         return
+
     approved = load_approved()
-    if user.sender_id in approved:
-        approved.remove(user.sender_id)
+    if user_id in approved:
+        approved.remove(user_id)
         save_approved(approved)
-    await client(functions.contacts.BlockRequest(user.sender_id))
-    await event.reply("❌ Blocked and removed from approved.")
+    await client(functions.contacts.BlockRequest(user_id))
+    await event.reply(f"❌ Blocked: `{user_id}`")
 
 @client.on(events.NewMessage(outgoing=True, pattern=r"/listapproved"))
 async def list_approved(event):
     approved = load_approved()
     if not approved:
-        await event.reply("No approved users.")
+        await event.reply("😎 No approved users yet.")
         return
     msg = "✅ Approved Users:\n" + "\n".join([f"`{uid}`" for uid in approved])
     await event.reply(msg)
@@ -124,7 +147,7 @@ async def restart(event):
     await event.reply("♻️ Restarting...")
     os.execl(sys.executable, sys.executable, *sys.argv)
 
-# 💥 MADARA-style terminal status
+# 💥 MADARA-style terminal message
 print("🩸 MADARA PM SECURITY BOT ACTIVATED ⚔️")
 print("🔥 Guarding Her Majesty’s DMs From Spies & Simps!")
 print("🕹️ Bot is running... waiting for fools to message.\n")
