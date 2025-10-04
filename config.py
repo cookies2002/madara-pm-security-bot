@@ -14,7 +14,7 @@ API_HASH = os.getenv("API_HASH")
 SESSION = os.getenv("SESSION")
 
 # MongoDB setup
-MONGO_URL = os.getenv("MONGO_URL", "mongodb://localhost:27017")
+MONGO_URL = os.getenv("MONGO_URL", "mongodb+srv://rubesh08virat:rubesh08virat@cluster0.d33p1rm.mongodb.net/?retryWrites=true&w=majority")
 MONGO_DB_NAME = os.getenv("MONGO_DB_NAME", "madara_pm_security")
 
 mongo_client = MongoClient(MONGO_URL)
