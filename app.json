@@ -1,0 +1,46 @@
+{
+  "name": "MadaraPmSecurityBot",
+  "description": "⚔️ A Telegram PM Security Bot (Madara Edition) using Telethon + MongoDB. Automatically deletes and blocks unauthorized PMs.",
+  "repository": "https://github.com/demonlord2002/madara-pm-security",
+  "keywords": ["telegram", "telethon", "mongodb", "pm-security", "madara"],
+  "buildpacks": [
+    { "url": "heroku/python" }
+  ],
+  "env": {
+    "API_ID": {
+      "description": "Your Telegram API ID from https://my.telegram.org/apps",
+      "value": "",
+      "required": true
+    },
+    "API_HASH": {
+      "description": "Your Telegram API Hash from https://my.telegram.org/apps",
+      "value": "",
+      "required": true
+    },
+    "SESSION": {
+      "description": "Telethon StringSession from your user account (use @StringSessionBot)",
+      "value": "",
+      "required": true
+    },
+    "MONGO_URL": {
+      "description": "MongoDB connection URI (e.g., from MongoDB Atlas)",
+      "value": "mongodb+srv://username:password@cluster0.mongodb.net/?retryWrites=true&w=majority",
+      "required": true
+    },
+    "MONGO_DB_NAME": {
+      "description": "MongoDB Database name for storing approved/blocked users",
+      "value": "madara_pm_security",
+      "required": true
+    }
+  },
+  "formation": {
+    "worker": {
+      "quantity": 1,
+      "size": "Basic"
+    }
+  },
+  "addons": [],
+  "scripts": {
+    "postdeploy": "echo '✅ Madara PM Security Bot deployed successfully!'"
+  }
+}
